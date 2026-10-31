@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мой сайт</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 40px;
+            margin: 0;
+            min-height: 100vh;
+
+            /* Плавный плывущий градиент чёрный → красный → чёрный */
+            background: linear-gradient(135deg, #000000, #8b0000, #000000, #8b0000, #000000);
+            background-size: 400% 400%;
+            animation: bg-gradient 12s ease infinite;
+        }
+
+        @keyframes bg-gradient {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            width: 250px;
+            transition: transform 0.1s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        button:active { transform: scale(0.97); }
+
+        #btn-news  { background-color: #2ecc71; }  /* зелёная   */
+        #btn-shame { background-color: #e74c3c; }  /* красная   */
+        #btn-free  { background-color: #f39c12; }  /* оранжевая */
+
+        #news-container {
+            margin-top: 30px;
+            display: none;
+        }
+        #news-container img {
+            max-width: 600px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+        }
+
+        #shame-list {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+            min-width: 300px;
+            border: 1px solid #8b0000;
+        }
+        .shame-name {
+            font-size: 24px;
+            padding: 10px;
+            margin: 5px 0;
+            color: white;
+            background: rgba(139, 0, 0, 0.6);
+            border-left: 5px solid #e74c3c;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="btn-news">Новостi</button>
+    <button id="btn-shame">Позорищiа</button>
+    <button id="btn-free">Свободi</button>
+
+    <div id="news-container">
+        <!-- Чтобы обновить картинку — просто замени файл news.jpg в папке сайта -->
+        <img src="news.jpg" alt="Новость дня">
+    </div>
+
+    <div id="shame-list"></div>
+
+    <script>
+        // Новостi — показать/скрыть картинку
+        document.getElementById('btn-news').addEventListener('click', function() {
+            const news  = document.getElementById('news-container');
+            const shame = document.getElementById('shame-list');
+            news.style.display  = news.style.display === 'block' ? 'none' : 'block';
+            shame.style.display = 'none';
+        });
+
+        // Позорищiа — показать/скрыть список
+        document.getElementById('btn-shame').addEventListener('click', function() {
+            const shame = document.getElementById('shame-list');
+            const news  = document.getElementById('news-container');
+            if (shame.style.display === 'block') {
+                shame.style.display = 'none';
+                return;
+            }
+            shame.innerHTML = '<div class="shame-name">Kitiket</div><div class="shame-name">Bebra</div>';
+            shame.style.display = 'block';
+            news.style.display  = 'none';
+        });
+
+        // Свободi — переход на YouTube в новой вкладке
+        document.getElementById('btn-free').addEventListener('click', function() {
+            window.open('https://www.youtube.com/watch?v=mglygcayKu4', '_blank');
+        });
+    </script>
+</body>
+</html>
