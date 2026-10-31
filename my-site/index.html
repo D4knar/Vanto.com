@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Мой сайт</title>
+    <title>My Site</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +14,7 @@
             margin: 0;
             min-height: 100vh;
 
-            /* Плавный плывущий градиент чёрный → красный → чёрный */
+            /* Smooth flowing gradient black → red → black */
             background: linear-gradient(135deg, #000000, #8b0000, #000000, #8b0000, #000000);
             background-size: 400% 400%;
             animation: bg-gradient 12s ease infinite;
@@ -39,9 +39,9 @@
         }
         button:active { transform: scale(0.97); }
 
-        #btn-news  { background-color: #2ecc71; }  /* зелёная   */
-        #btn-shame { background-color: #e74c3c; }  /* красная   */
-        #btn-free  { background-color: #f39c12; }  /* оранжевая */
+        #btn-news  { background-color: #2ecc71; }  /* green  */
+        #btn-shame { background-color: #e74c3c; }  /* red    */
+        #btn-free  { background-color: #f39c12; }  /* orange */
 
         #news-container {
             margin-top: 30px;
@@ -72,23 +72,132 @@
             border-left: 5px solid #e74c3c;
             border-radius: 4px;
         }
+
+        /* ---------- Loading screen ---------- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.6s ease;
+        }
+        #loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #loader-percent {
+            font-size: 64px;
+            color: #e74c3c;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+            font-variant-numeric: tabular-nums;
+        }
+
+        #loader-bar-bg {
+            width: 320px;
+            height: 14px;
+            background: #1a0000;
+            border: 1px solid #8b0000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #loader-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8b0000, #ff2d2d);
+            transition: width 0.15s linear;
+        }
+
+        #loader-text {
+            color: #999;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
-    <button id="btn-news">Новостi</button>
-    <button id="btn-shame">Позорищiа</button>
-    <button id="btn-free">Свободi</button>
+    <!-- Loading screen -->
+    <div id="loader">
+        <div id="loader-percent">0%</div>
+        <div id="loader-bar-bg">
+            <div id="loader-bar"></div>
+        </div>
+        <div id="loader-text">Loading...</div>
+    </div>
+
+    <!-- Site -->
+    <button id="btn-news">News</button>
+    <button id="btn-shame">Shameful people</button>
+    <button id="btn-free">Freedom</button>
 
     <div id="news-container">
-        <!-- Чтобы обновить картинку — просто замени файл news.jpg в папке сайта -->
-        <img src="news.jpg" alt="Новость дня">
+        <!-- To update the image — just replace news.jpg in the site folder -->
+        <img src="news.jpg" alt="News of the day">
     </div>
 
     <div id="shame-list"></div>
 
     <script>
-        // Новостi — показать/скрыть картинку
+        // ================= LOADING =================
+        // Normal speed: ~1% per 60 ms.
+        // At 35% and 47% — slowdown 10x for 3 seconds.
+        const loader       = document.getElementById('loader');
+        const percentLabel = document.getElementById('loader-percent');
+        const bar          = document.getElementById('loader-bar');
+
+        let progress = 0;
+        let paused   = false;
+
+        const NORMAL_STEP_MS = 60;   // normal delay between percent steps
+        const SLOW_STEP_MS   = 600;  // 10x slower
+        const SLOW_DURATION  = 3000; // 3 seconds of slowdown
+
+        function updateUI() {
+            percentLabel.textContent = Math.floor(progress) + '%';
+            bar.style.width = progress + '%';
+        }
+
+        function tick() {
+            if (paused) return;
+
+            progress += 1;
+            if (progress > 100) progress = 100;
+            updateUI();
+
+            if (progress >= 100) {
+                setTimeout(finishLoading, 400);
+                return;
+            }
+
+            if (progress === 35 || progress === 47) {
+                paused = true;
+                setTimeout(() => {
+                    paused = false;
+                    tick();
+                }, SLOW_DURATION);
+                return;
+            }
+
+            setTimeout(tick, NORMAL_STEP_MS);
+        }
+
+        function finishLoading() {
+            loader.classList.add('hidden');
+            setTimeout(() => { loader.style.display = 'none'; }, 700);
+        }
+
+        tick();
+
+
+        // ================= BUTTONS =================
         document.getElementById('btn-news').addEventListener('click', function() {
             const news  = document.getElementById('news-container');
             const shame = document.getElementById('shame-list');
@@ -96,7 +205,6 @@
             shame.style.display = 'none';
         });
 
-        // Позорищiа — показать/скрыть список
         document.getElementById('btn-shame').addEventListener('click', function() {
             const shame = document.getElementById('shame-list');
             const news  = document.getElementById('news-container');
@@ -109,7 +217,6 @@
             news.style.display  = 'none';
         });
 
-        // Свободi — переход на YouTube в новой вкладке
         document.getElementById('btn-free').addEventListener('click', function() {
             window.open('https://www.youtube.com/watch?v=mglygcayKu4', '_blank');
         });
